@@ -1,0 +1,281 @@
+<title>Tiga Tombol Cinta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: one centered stage. Three buttons appear one at a time; the last press opens a full-screen love screen with drifting hearts. Single romantic look by choice. */
+:root {
+  --bg: #2b0b1c;
+  --bg-glow: #5a1738;
+  --rose: #ff6f9c;
+  --rose-deep: #e0457a;
+  --blush: #ffd9e4;
+  --ink: #fff3f6;
+  --muted: #e9b3c6;
+  --font-script: 'Dancing Script', 'Brush Script MT', 'Segoe Script', cursive;
+  --font-body: 'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(60rem 40rem at 50% 0%, var(--bg-glow), transparent 70%),
+    radial-gradient(40rem 30rem at 100% 100%, #3d0f27, transparent 70%);
+  background-attachment: fixed;
+  color: var(--ink);
+  font-family: var(--font-body);
+  padding-block: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.stage {
+  min-height: calc(100vh - 48px);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 28px;
+  text-align: center;
+}
+.eyebrow {
+  margin: 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 9vw, 3.75rem);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.hint {
+  margin: 0;
+  min-height: 1.5em;
+  color: var(--blush);
+  font-size: 1.0625rem;
+}
+.pad {
+  display: grid;
+  place-items: center;
+  min-height: 96px;
+}
+.press {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font: 800 1.125rem/1 var(--font-body);
+  color: #3a0c24;
+  background: linear-gradient(180deg, #ff93b6, var(--rose));
+  padding: 18px 34px;
+  border-radius: 999px;
+  box-shadow: 0 8px 0 var(--rose-deep), 0 18px 36px rgba(255, 111, 156, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.press:hover { transform: translateY(-2px); }
+.press:active {
+  transform: translateY(6px);
+  box-shadow: 0 2px 0 var(--rose-deep), 0 6px 16px rgba(255, 111, 156, 0.3);
+}
+.press:focus-visible, .again:focus-visible {
+  outline: 3px solid var(--blush);
+  outline-offset: 4px;
+}
+.press.swap { animation: pop 0.35s ease; }
+@keyframes pop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.dots {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid var(--muted);
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.dot.on {
+  background: var(--rose);
+  border-color: var(--rose);
+  transform: scale(1.15);
+}
+
+/* Love screen */
+.love {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 18px;
+  text-align: center;
+  padding-block: 24px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background:
+    radial-gradient(50rem 36rem at 50% 45%, #7a1c47, transparent 70%),
+    #260817;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.love.show { opacity: 1; }
+.love-text {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 700;
+  font-size: clamp(4rem, 22vw, 9rem);
+  line-height: 1;
+  color: var(--blush);
+  text-shadow: 0 0 24px rgba(255, 111, 156, 0.75), 0 0 64px rgba(255, 111, 156, 0.45);
+  transform: scale(0.8);
+  transition: transform 1.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.love.show .love-text { transform: scale(1); animation: beat 2.2s ease-in-out 1.4s infinite; }
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.love-to {
+  margin: 0;
+  font-family: var(--font-script);
+  font-weight: 600;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  line-height: 1.1;
+  color: var(--muted);
+}
+.love-sub {
+  margin: 0;
+  max-width: 28ch;
+  font-size: 1.1875rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.again {
+  appearance: none;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(233, 179, 198, 0.5);
+  border-radius: 999px;
+  padding: 10px 22px;
+  font: 600 0.9375rem var(--font-body);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+.again:hover { color: var(--ink); border-color: var(--ink); }
+.hearts {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.heart {
+  position: absolute;
+  bottom: -2rem;
+  color: var(--rose);
+  opacity: 0;
+  animation: rise linear forwards;
+}
+@keyframes rise {
+  0% { transform: translateY(0) translateX(0) rotate(-8deg); opacity: 0; }
+  12% { opacity: 0.85; }
+  100% { transform: translateY(-110vh) translateX(var(--drift)) rotate(10deg); opacity: 0; }
+}
+.love > :not(.hearts) { position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .press.swap, .love.show .love-text { animation: none; }
+  .love, .love-text, .dot { transition: none; }
+  .heart { display: none; }
+}
+</style>
+
+<main class="stage" id="stage">
+  <p class="eyebrow">Khusus untuk kamu</p>
+  <h1>Ada kejutan kecil di sini</h1>
+  <p class="hint" id="hint" aria-live="polite">Tekan tombol di bawah ya</p>
+  <div class="pad"><button class="press" id="press" type="button">Tekan aku</button></div>
+  <div class="dots" id="dots" aria-hidden="true">
+    <span class="dot on"></span><span class="dot"></span><span class="dot"></span>
+  </div>
+</main>
+
+<section class="love" id="love" hidden aria-live="polite">
+  <div class="hearts" id="hearts"></div>
+  <p class="love-to">Hai Rahayu,</p>
+  <p class="love-text">i love u</p>
+  <button class="again" id="again" type="button">Ulangi dari awal</button>
+</section>
+
+<script>
+(function () {
+  var labels = ['Tekan aku', 'Terus, tekan lagi', 'Satu lagi, ya'];
+  var hints = ['Tekan tombol di bawah ya', 'Bagus, hampir sampai', 'Yang terakhir, janji'];
+  var step = 0;
+  var press = document.getElementById('press');
+  var hint = document.getElementById('hint');
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.dot'));
+  var stage = document.getElementById('stage');
+  var love = document.getElementById('love');
+  var hearts = document.getElementById('hearts');
+  var timer = null;
+
+  function render() {
+    press.textContent = labels[step];
+    hint.textContent = hints[step];
+    dots.forEach(function (d, i) { d.classList.toggle('on', i <= step); });
+    press.classList.remove('swap');
+    void press.offsetWidth;
+    press.classList.add('swap');
+  }
+
+  function spawn() {
+    var h = document.createElement('span');
+    h.className = 'heart';
+    h.textContent = '♥';
+    h.style.left = Math.random() * 100 + '%';
+    h.style.fontSize = (14 + Math.random() * 30) + 'px';
+    h.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+    h.style.animationDuration = (5 + Math.random() * 5) + 's';
+    hearts.appendChild(h);
+    setTimeout(function () { if (h.parentNode) h.parentNode.removeChild(h); }, 11000);
+  }
+
+  function reveal() {
+    stage.hidden = true;
+    love.hidden = false;
+    void love.offsetWidth;
+    love.classList.add('show');
+    for (var i = 0; i < 10; i++) setTimeout(spawn, i * 180);
+    timer = setInterval(spawn, 450);
+    document.getElementById('again').focus();
+  }
+
+  function reset() {
+    clearInterval(timer);
+    hearts.innerHTML = '';
+    love.classList.remove('show');
+    love.hidden = true;
+    stage.hidden = false;
+    step = 0;
+    render();
+    press.focus();
+  }
+
+  press.addEventListener('click', function () {
+    if (step < 2) { step += 1; render(); } else { reveal(); }
+  });
+  document.getElementById('again').addEventListener('click', reset);
+})();
+</script>
